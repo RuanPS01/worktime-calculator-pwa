@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css" />
+
+    <!-- Title -->
+    <title>Worktime Calculator</title>
+
+    <!-- Meta Tags required for
+	Progressive Web App -->
+    <meta name="apple-mobile-web-app-status-bar" content="#000">
+    <meta name="theme-color" content="black">
+
+    <!-- Manifest File link -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="assets/icon-192x192.png" />
+
+    <script type="module" src="./app.js"></script>
+</head>
+
+<body>
+    <main class="centeredCollum">
+        <img id="sunrise" src="assets/sunrise.svg" style="width: 200px; height: 200px" />
+        <img id="storm" src="assets/storm.svg" style="width: 200px; height: 200px; display: none" />
+        <h1 style="text-align: center; margin-bottom: 4px;">Worktime Calculator</h1>
+        <p style="text-align: center; opacity: 0.5">Sum your times</p>
+        <br>
+        <section id="workTimeContainer" class="centeredCollum">
+            <div id="periodContainer" style="
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                    align-items: start;
+                    width:max-content;
+                    background-color: #0180c00c;
+                    border-radius: 10px;
+                    padding: 20px;
+                    border: 2px solid #0180c033">
+                <div id="periodList">
+                    <form id="period0" onsubmit="sumPeriod(0, event)" style="
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: start;
+                            gap: 30px;
+                            margin-bottom: 30px">
+                        <div style="display: flex; flex-direction: column; justify-content: center; gap: 16px">
+                            <div style="
+                                position: absolute;
+                                align-self: flex-end;
+                                margin-right: -15px;
+                                z-index: -1;
+                                border: 2px solid #017fc0;
+                                border-width: 2px 2px 2px 0px;
+                                width: 30px;
+                                height: 70px;
+                                border-radius: 10px"></div>
+                            <input type="time" id="in0" style="margin: 0px" onchange="sumPeriod(0, event)" />
+                            <input type="time" id="out0" style="margin: 0px" onchange="sumPeriod(0, event)" />
+                        </div>
+                        <div style="display: flex; flex-direction: row; gap: 10px">
+                            <label id="sumPeriod0">--h --m</label>
+                            <a onclick="copyPeriod(0, event)"><img src="assets/copy.svg"
+                                    style="width: 26px; height: 26px; margin-right: 10px"></a>
+                        </div>
+                    </form>
+                </div>
+
+                <div style="
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;">
+                    <button id="addPeriod" class="outline" onclick="addPeriod()">
+                        <img src="assets/plus.svg" style="width: 26px; height: 26px; margin-right: 10px" />
+                        In & Out
+                    </button>
+                    <label id="sumWorkTime" style="
+                            margin-left: 20px;
+                            color: #017fc0;
+                            font-weight: bold;">
+                        --h --m</label>
+                    <a onclick="copyTotalWorkTime(event)"><img src="assets/copy.svg"
+                            style="width: 26px; height: 26px;"></a>
+                </div>
+            </div>
+
+        </section>
