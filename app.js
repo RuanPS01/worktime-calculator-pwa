@@ -56,6 +56,8 @@ window.sumPeriod = async function (index, event) {
         if (diffHours.toString() == 'NaN' || diffMinutes.toString() == 'NaN') {
             document.getElementById(`in${index}`).setAttribute('aria-invalid', 'true');
             document.getElementById(`out${index}`).setAttribute('aria-invalid', 'true');
+            document.getElementById('sunrise').style.display = 'none';
+            document.getElementById('storm').style.display = 'block';
         } else {
             sumPeriod.textContent = `${diffHours ? diffHours + 'h' : ''} ${diffMinutes ? diffMinutes + 'm' : ''}`
         }
