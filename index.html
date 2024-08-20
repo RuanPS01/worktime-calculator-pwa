@@ -64,8 +64,14 @@
                         </div>
                         <div style="display: flex; flex-direction: row; gap: 10px">
                             <label id="sumPeriod0">--h --m</label>
-                            <a onclick="copyPeriod(0, event)"><img src="assets/copy.svg"
-                                    style="width: 26px; height: 26px; margin-right: 10px"></a>
+                            <a id="copyPeriod0" onclick="copyPeriod(0, event)"
+                                style="margin-right: 10px; cursor: pointer;">
+                                <img src="assets/copy.svg" style="width: 26px; height: 26px;">
+                            </a>
+                            <a id="deletePeriod0" onclick="deletePeriod(0, event)"
+                                style="margin-right: 10px; opacity: 0; pointer-events: none">
+                                <img src="assets/close.svg" style="width: 26px; height: 26px;">
+                            </a>
                         </div>
                     </form>
                 </div>
@@ -80,13 +86,13 @@
                         <img src="assets/plus.svg" style="width: 26px; height: 26px; margin-right: 10px" />
                         In & Out
                     </button>
+                    <label style="font-size: smaller; opacity: 0.2; margin-left: 20px;">Total: </label>
                     <label id="sumWorkTime" style="
-                            margin-left: 20px;
                             color: #017fc0;
                             font-weight: bold;">
                         --h --m</label>
-                    <a onclick="copyTotalWorkTime(event)"><img src="assets/copy.svg"
-                            style="width: 26px; height: 26px;"></a>
+                    <a onclick="copyTotalWorkTime(event)" style="transform: translateY(-5px);"><img
+                            src="assets/copy.svg" style="width: 26px; height: 26px; cursor: pointer;"></a>
                 </div>
             </div>
 

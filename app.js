@@ -28,6 +28,7 @@ window.clearWarning = function (event) {
 
 window.sumPeriod = async function (index, event) {
     event.preventDefault();
+    console.log(`[sumPeriod] index: ${index}`);
     try {
         document.getElementById(`in${index}`).setAttribute('aria-invalid', 'false');
         document.getElementById(`out${index}`).setAttribute('aria-invalid', 'false');
@@ -42,24 +43,18 @@ window.sumPeriod = async function (index, event) {
         }
         const diffTime = outTimeDate.getTime() - inTimeDate.getTime();
         if (diffTime < 0) {
-            // 86400000 é o número de milissegundos equivalente a um dia
-            diffTime += 86400000;
-            diffTime += 86400000;
+            diffTime += 24 * 60 * 60 * 1000;
         }
-        // 3600000 é o número de milissegundos equivalente a uma hora
-        const diffHours = Math.floor(diffTime / 3600000);
-        // 60000 é o número de milissegundos equivalente a 1 minuto
-        const diffMinutes = Math.floor((diffTime % 3600000) / 60000);
 
-        totalTime[index] = diffHours + diffMinutes / 60;
+        totalTime[index] = diffTime;
 
-        if (diffHours.toString() == 'NaN' || diffMinutes.toString() == 'NaN') {
+        if (isNaN(diffTime)) {
             document.getElementById(`in${index}`).setAttribute('aria-invalid', 'true');
             document.getElementById(`out${index}`).setAttribute('aria-invalid', 'true');
             document.getElementById('sunrise').style.display = 'none';
             document.getElementById('storm').style.display = 'block';
         } else {
-            sumPeriod.textContent = `${diffHours ? diffHours + 'h' : ''} ${diffMinutes ? diffMinutes + 'm' : ''}`
+            sumPeriod.textContent = `${diffTime ? formatTime(diffTime) : '0h 0m'}`
         }
         sumTotal();
     } catch (err) {
@@ -69,6 +64,13 @@ window.sumPeriod = async function (index, event) {
         document.getElementById('sunrise').style.display = 'none';
         document.getElementById('storm').style.display = 'block';
     }
+}
+
+function formatTime(milliseconds) {
+    const hours = Math.floor(milliseconds / (60 * 60 * 1000));
+    const minutes = Math.floor((milliseconds % (60 * 60 * 1000)) / (60 * 1000));
+
+    return `${hours ? hours + 'h' : ''} ${minutes ? minutes + 'm' : ''}`;
 }
 
 window.copyPeriod = function (index, event) {
@@ -83,14 +85,18 @@ window.copyPeriod = function (index, event) {
 
 window.sumTotal = function () {
     let totalSum = totalTime.reduce((a, b) => a + b, 0);
-    const hours = Math.trunc(totalSum);
-    const minutes = Math.trunc((totalSum - hours) * 60);
+    let timeText;
 
-    if (hours.toString() == 'NaN' || minutes.toString() == 'NaN') {
-        document.getElementById('sumWorkTime').textContent = '--h --m';
+    if (isNaN(totalSum)) {
+        timeText = '--h --m';
+    } else if (!totalSum) {
+        timeText = '0h 0m';
     } else {
-        document.getElementById('sumWorkTime').textContent = `${hours ? hours + 'h' : ''} ${minutes ? minutes + 'm' : ''}`;
+        timeText = formatTime(totalSum);
     }
+
+    document.getElementById('sumWorkTime').textContent = timeText;
+
 }
 
 
@@ -119,8 +125,27 @@ window.addPeriod = function () {
     inElement.setAttribute('onchange', `sumPeriod(${index}, event)`);
     outElement.setAttribute('onchange', `sumPeriod(${index}, event)`);
     newPeriod.setAttribute('onsubmit', `sumPeriod(${index}, event)`);
-    const copyAnchorElement = newPeriod.querySelector('a');
+
+    const copyAnchorElement = newPeriod.querySelector('#copyPeriod0');
+    copyAnchorElement.id = `copyPeriod${index}`;
     copyAnchorElement.setAttribute('onclick', `copyPeriod(${index}, event)`);
+
+    const deleteElement = newPeriod.querySelector('#deletePeriod0');
+    deleteElement.id = `deletePeriod${index}`;
+    deleteElement.style = 'margin-right: 10px; opacity: 1; cursor: pointer;';
+    deleteElement.setAttribute('onclick', `deletePeriod(${index}, event)`);
+
     periodList.appendChild(newPeriod);
     totalTime[index] = 0;
+    sumPeriod(index, event);
+    sumTotal();
+}
+
+window.deletePeriod = function (index, event) {
+    event.preventDefault();
+    const periodList = document.getElementById('periodList');
+    const periodElement = periodList.querySelector(`#period${index}`);
+    periodList.removeChild(periodElement);
+    totalTime.splice(index, 1);
+    sumTotal();
 }
