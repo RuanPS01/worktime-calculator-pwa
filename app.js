@@ -3,6 +3,7 @@ let totalTime = [];
 
 window.onload = async function () {
     registerSW();
+    document.addEventListener('keydown', handleKeyDown);
 }
 
 // Register the Service Worker
@@ -24,7 +25,6 @@ window.clearWarning = function (event) {
     document.getElementById('storm').style.display = 'none';
     document.getElementById('sunrise').style.display = 'block';
 }
-
 
 window.sumPeriod = async function (index, event) {
     event.preventDefault();
@@ -112,25 +112,28 @@ window.copyTotalWorkTime = function (event) {
 
 window.addPeriod = function () {
     const periodList = document.getElementById('periodList');
-    const newPeriod = periodElement.cloneNode(true);
+    const lastPeriod = periodList.querySelector(`#period${periodList.children.length - 1}`);
+    const newPeriod = lastPeriod.cloneNode(true);
     const index = periodList.children.length;
     newPeriod.id = `period${index}`;
-    const inElement = newPeriod.querySelector('#in0');
+    const inElement = newPeriod.querySelector(`#in${periodList.children.length - 1}`);
     inElement.id = `in${index}`;
-    const outElement = newPeriod.querySelector('#out0');
+    inElement.setAttribute('tabindex', index + 4);
+    const outElement = newPeriod.querySelector(`#out${periodList.children.length - 1}`);
     outElement.id = `out${index}`;
-    const sumPeriodElement = newPeriod.querySelector('#sumPeriod0');
+    outElement.setAttribute('tabindex', index + 5);
+    const sumPeriodElement = newPeriod.querySelector(`#sumPeriod${periodList.children.length - 1}`);
     sumPeriodElement.id = `sumPeriod${index}`;
 
     inElement.setAttribute('onchange', `sumPeriod(${index}, event)`);
     outElement.setAttribute('onchange', `sumPeriod(${index}, event)`);
     newPeriod.setAttribute('onsubmit', `sumPeriod(${index}, event)`);
 
-    const copyAnchorElement = newPeriod.querySelector('#copyPeriod0');
+    const copyAnchorElement = newPeriod.querySelector(`#copyPeriod${periodList.children.length - 1}`);
     copyAnchorElement.id = `copyPeriod${index}`;
     copyAnchorElement.setAttribute('onclick', `copyPeriod(${index}, event)`);
 
-    const deleteElement = newPeriod.querySelector('#deletePeriod0');
+    const deleteElement = newPeriod.querySelector(`#deletePeriod${periodList.children.length - 1}`);
     deleteElement.id = `deletePeriod${index}`;
     deleteElement.style = 'margin-right: 10px; opacity: 1; cursor: pointer;';
     deleteElement.setAttribute('onclick', `deletePeriod(${index}, event)`);
@@ -139,6 +142,8 @@ window.addPeriod = function () {
     totalTime[index] = 0;
     sumPeriod(index, event);
     sumTotal();
+    const addPeriodButton = document.getElementById('addPeriod');
+    addPeriodButton.setAttribute('tabindex', index + 6);
 }
 
 window.deletePeriod = function (index, event) {
@@ -148,4 +153,30 @@ window.deletePeriod = function (index, event) {
     periodList.removeChild(periodElement);
     totalTime.splice(index, 1);
     sumTotal();
+    for (let i = index; i < periodList.children.length; i++) {
+        const inElement = periodList.querySelector(`#in${i + 1}`);
+        inElement.setAttribute('tabindex', i + 1);
+        const outElement = periodList.querySelector(`#out${i + 1}`);
+        outElement.setAttribute('tabindex', i + 1);
+        const copyAnchorElement = periodList.querySelector(`#copyPeriod${i + 1}`);
+        copyAnchorElement.setAttribute('tabindex', i + 1);
+        const deleteElement = periodList.querySelector(`#deletePeriod${i + 1}`);
+        deleteElement.setAttribute('tabindex', i + 1);
+    }
 }
+
+function handleKeyDown(event) {
+    if ((event.key === '+' || event.key === '=' ||(event.ctrlKey && event.key === 'Enter')) && !event.repeat) {
+        event.preventDefault();
+        
+        addPeriod();
+    }
+    if (event.key === 'Enter') {
+        const lastInput = Array.from(document.querySelectorAll('input')).pop();
+        if (lastInput === document.activeElement) {
+            addPeriod();
+        }
+    }
+}
+
+

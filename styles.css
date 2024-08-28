@@ -16,3 +16,8 @@ section {
     width: 100%;
     box-sizing: border-box;
 }
+
+
+*:focus {
+    outline: 2px solid #017fc0;
+}
